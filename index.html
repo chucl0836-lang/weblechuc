@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PHARMACY PRO MAX - SINH VIEN TECHNOLOGY 2026</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;400;600;800&family=Montserrat:wght@900&family=Be+Vietnam+Pro:wght@300;500;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.1/vanilla-tilt.min.js"></script>
+
+    <style>
+        :root {
+            --chinh: #00f2ff; --phu: #7000ff; --nhan: #ff007a; --nen: #02040a;
+            --the: rgba(255, 255, 255, 0.03); --vien: rgba(255, 255, 255, 0.1);
+            --gradient: linear-gradient(135deg, var(--chinh) 0%, var(--phu) 100%);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; scroll-behavior: smooth; }
+        body { background: var(--nen); color: #fff; font-family: 'Plus Jakarta Sans', sans-serif; overflow-x: hidden; cursor: none; }
+
+        /* CON TRỎ CHUỘT VIP */
+        #dot { position: fixed; width: 6px; height: 6px; background: #fff; border-radius: 50%; pointer-events: none; z-index: 100000; mix-blend-mode: difference; }
+        #circle { position: fixed; width: 40px; height: 40px; border: 1.5px solid var(--chinh); border-radius: 50%; pointer-events: none; z-index: 99999; transition: 0.1s linear; }
+
+        /* MÀN HÌNH CHÀO MỪNG */
+        #welcome-screen {
+            position: fixed; inset: 0; z-index: 99999; background: #000;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            transition: 1.2s cubic-bezier(0.8, 0, 0.2, 1);
+        }
+        #welcome-screen.hide { transform: translateY(-100%); pointer-events: none; }
+
+        /* NAVIGATION */
+        header { 
+            position: fixed; top: 0; width: 100%; padding: 20px 6%; display: flex; 
+            justify-content: space-between; align-items: center; z-index: 1000; 
+            background: rgba(2, 4, 10, 0.85); backdrop-filter: blur(20px); border-bottom: 1px solid var(--vien);
+        }
+        .logo { font-family: 'Montserrat'; font-size: 1.8rem; font-weight: 900; cursor: pointer; }
+        .logo span { color: var(--chinh); }
+        nav { display: flex; gap: 15px; }
+        nav a { color: #fff; text-decoration: none; font-weight: 800; font-size: 0.7rem; padding: 10px 18px; border-radius: 12px; transition: 0.4s; border: 1px solid transparent; }
+        nav a:hover, nav a.active { border-color: var(--chinh); background: rgba(0, 242, 255, 0.1); }
+
+        /* CHỮ CHẠY RAINBOW */
+        .marquee-container {
+            width: 100%; background: #000; padding: 10px 0;
+            position: fixed; top: 75px; z-index: 998; border-bottom: 1px solid var(--vien);
+        }
+        .marquee-text { display: inline-block; font-weight: 800; font-size: 0.75rem; animation: marquee 25s linear infinite, rainbow 5s linear infinite; }
+
+        /* PAGE SYSTEM */
+        .page { display: none; padding: 180px 6% 60px; min-height: 100vh; animation: fadeIn 0.8s ease; }
+        .page.active { display: block; }
+
+        /* 3D CARDS */
+        .khung-san-pham { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 30px; }
+        .the-thuoc { 
+            background: var(--the); border: 1px solid var(--vien); border-radius: 35px; padding: 40px;
+            cursor: pointer; text-align: center; transform-style: preserve-3d;
+        }
+        .the-thuoc img { width: 100%; height: 180px; object-fit: contain; margin-bottom: 25px; transform: translateZ(40px); }
+
+        /* ĐỐI TÁC NHÀ THUỐC */
+        .nha-thuoc-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 60px; }
+        .the-nha-thuoc { background: rgba(255,255,255,0.02); border: 1px solid var(--vien); padding: 30px; border-radius: 25px; transition: 0.3s; }
+        .the-nha-thuoc:hover { border-color: var(--phu); transform: translateY(-5px); }
+
+        /* TÍNH LIỀU VIP */
+        .vip-calc-grid { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 40px; }
+        .glass-card { background: var(--the); border: 1px solid var(--vien); padding: 45px; border-radius: 40px; }
+        .btn-vip { 
+            width: 100%; padding: 20px; margin-top: 25px; border: none; border-radius: 15px;
+            background: var(--gradient); color: #fff; font-weight: 900; cursor: pointer;
+            transition: 0.3s; letter-spacing: 2px; text-transform: uppercase;
+        }
+
+        /* LIÊN HỆ & MXH */
+        .social-links { display: flex; justify-content: center; gap: 25px; margin-top: 30px; }
+        .social-links a { 
+            width: 60px; height: 60px; border: 1px solid var(--vien); border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; color: #fff; 
+            font-size: 1.5rem; transition: 0.3s; 
+        }
+        .social-links a:hover { border-color: var(--chinh); color: var(--chinh); transform: scale(1.2); box-shadow: 0 0 20px var(--chinh); }
+
+        @keyframes marquee { 0% { transform: translateX(100vw); } 100% { transform: translateX(-100%); } }
+        @keyframes rainbow { 0% { color: #ff0000; } 50% { color: #00f2ff; } 100% { color: #ff0000; } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* MODAL */
+        .modal-overlay { position: fixed; inset: 0; z-index: 10000; background: rgba(0,0,0,0.98); display: none; align-items: center; justify-content: center; }
+        .modal-box { width: 90%; max-width: 1100px; max-height: 90vh; background: #05070a; border-radius: 40px; border: 1px solid var(--chinh); padding: 50px; overflow-y: auto; position: relative; }
+        .doctor-box {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--chinh);
+    padding: 30px;
+    border-radius: 30px;
+    margin-bottom: 30px;
+    box-shadow: 0 0 25px rgba(0,242,255,0.2);
+}
+
+.doctor-box h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: var(--chinh);
+}
+
+.doctor-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+.doctor-grid input,
+.doctor-grid select {
+    width: 100%;
+    padding: 12px;
+    background: #000;
+    border: 1px solid var(--vien);
+    color: #fff;
+    border-radius: 10px;
+}
+
+#vip-result {
+    transition: 0.5s;
+}
+    </style>
+</head>
+<body>
+    <div id="dot"></div><div id="circle"></div>
+
+    <div id="welcome-screen">
+        <h1 style="font-family:'Montserrat'; font-size:4rem; background:var(--gradient); -webkit-background-clip:text; color:transparent; margin-bottom:10px">HỆ THỐNG DƯỢC PHẨM V.I.P</h1>
+        <p style="letter-spacing:10px; margin-bottom:40px; opacity:0.5">DỰ ÁN SINH VIÊN  2026</p>
+        <div data-tilt data-tilt-max="20" data-tilt-glare data-tilt-max-glare="0.5">
+            <button class="btn-vip" onclick="startApp()" style="width:auto; padding:20px 60px; font-size:1.2rem">BẮT ĐẦU TRẢI NGHIỆM</button>
+        </div>
+    </div>
+
+    <header>
+        <div class="logo" onclick="showPage('home')">DƯỢC PHẨM <span>V.I.P</span></div>
+        <nav>
+            <a href="javascript:void(0)" onclick="showPage('home')" id="nav-home" class="active">SẢN PHẨM</a>
+            <a href="javascript:void(0)" onclick="showPage('calc')" id="nav-calc">TRA CỨU LIỀU</a>
+            <a href="javascript:void(0)" onclick="showPage('contact')" id="nav-contact">LIÊN HỆ</a>
+        </nav>
+    </header>
+
+    <div class="marquee-container">
+        <div class="marquee-text">🚀 HỆ THỐNG TRA CỨU Y TẾ THÔNG MINH - HỢP TÁC CÙNG LONG CHÂU, PHARMACITY, AN KHANG - CHÚC BẠN LUÔN KHỎE MẠNH 🚀</div>
+    </div>
+
+    <div id="page-home" class="page active">
+        <h2 style="text-align:center; font-family:'Montserrat'; font-size:3rem; margin-bottom:50px">DANH MỤC <span style="color:var(--chinh)">DƯỢC PHẨM</span></h2>
+        <div class="khung-san-pham" id="drug-list"></div>
+
+        <div style="margin-top:100px">
+            <h3 style="font-family:'Montserrat'; text-align:center; margin-bottom:40px">HỆ THỐNG NHÀ THUỐC <span style="color:var(--phu)">TIN DÙNG</span></h3>
+            <div class="nha-thuoc-grid">
+                <div class="the-nha-thuoc">
+                    <h4 style="color:var(--chinh)">LONG CHÂU</h4>
+                    <p style="font-size:0.8rem; margin-top:10px; opacity:0.6; line-height:1.6">Hệ thống thuốc sỉ lẻ hàng đầu, đạt chuẩn GPP. Chuyên cung cấp các loại thuốc đặc trị và thực phẩm chức năng nhập khẩu.</p>
+                </div>
+                <div class="the-nha-thuoc">
+                    <h4 style="color:var(--chinh)">PHARMACITY</h4>
+                    <p style="font-size:0.8rem; margin-top:10px; opacity:0.6; line-height:1.6">Tiện lợi và hiện đại với hơn 1000 cửa hàng toàn quốc. Điểm đến tin cậy cho sức khỏe gia đình bạn.</p>
+                </div>
+                <div class="the-nha-thuoc">
+                    <h4 style="color:var(--chinh)">AN KHANG</h4>
+                    <p style="font-size:0.8rem; margin-top:10px; opacity:0.6; line-height:1.6">Thành viên tập đoàn MWG, cam kết tư vấn đúng thuốc, đúng liều, giá thành hợp lý nhất thị trường.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="page-calc" class="page">
+    <div class="vip-calc-grid">
+
+        <!-- DÁN VÀO ĐÂY -->
+        <div class="doctor-box">
+            <h2>🧠 BÁC SĨ AI THÔNG MINH</h2>
+
+            <div class="doctor-grid">
+                <div>
+                    <label>CÂN NẶNG (kg)</label>
+                    <input type="number" id="weight" placeholder="VD: 50">
+                </div>
+
+                <div>
+                    <label>CHIỀU CAO (cm)</label>
+                    <input type="number" id="height" placeholder="VD: 160">
+                </div>
+
+                <div>
+                    <label>ĐỘ TUỔI</label>
+                    <select id="age-group">
+                        <option value="child">Trẻ em</option>
+                        <option value="adult">Người lớn</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label>TRIỆU CHỨNG</label>
+                    <select id="symptom">
+                        <option value="sot">Sốt cao</option>
+                        <option value="daudau">Đau đầu</option>
+                        <option value="camcum">Cảm cúm</option>
+                        <option value="diung">Dị ứng</option>
+                        <option value="tieuchay">Tiêu chảy</option>
+                    </select>
+                </div>
+            </div>
+
+            <button class="btn-vip" onclick="vipCalculate()">🧪 CHẨN ĐOÁN NGAY</button>
+        </div>
+
+        <!-- KHUNG KẾT QUẢ GIỮ NGUYÊN -->
+        <div id="vip-result">
+        </div>
+
+    </div>
+</div>
+            <div id="vip-result" style="background:#000; border:1px dashed var(--chinh); border-radius:40px; display:flex; flex-direction:column; justify-content:center; text-align:center; padding:40px">
+                <i class="fa-solid fa-stethoscope fa-4x" style="opacity:0.1; margin-bottom:20px"></i>
+                <p style="opacity:0.3">Đang chờ thông tin từ bạn...</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="page-contact" class="page">
+        <div style="max-width:800px; margin:0 auto; text-align:center">
+            <h2 style="font-family:'Montserrat'; font-size:3rem; margin-bottom:40px">PHẢN HỒI <span style="color:var(--nhan)">HỆ THỐNG</span></h2>
+            <div class="glass-card">
+                <div style="color:#ffcc00; font-size:1.5rem; margin-bottom:20px">
+                    <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                </div>
+                <textarea style="width:100%; height:100px; background:#000; border:1px solid var(--vien); border-radius:15px; color:#fff; padding:15px" placeholder="Nhập ý kiến của bạn về dự án..."></textarea>
+                <button class="btn-vip" style="width:auto; padding:15px 50px">GỬI ĐÁNH GIÁ</button>
+            </div>
+
+            <div class="social-links">
+                <a href="https://facebook.com/share/1L9DTHUK81/"><i class="fa-brands fa-facebook-f"></i></a>
+                <a href="https://zalo.me/0916422994"><i class="fa-solid fa-phone"></i></a>
+                <a href="https://tiktok.com/@phmthyn2582"><i class="fa-brands fa-tiktok"></i></a>
+            </div>
+            <p style="margin-top:40px; opacity:0.3; font-size:0.8rem">THIẾT KẾ BỞI SINH VIÊN © 2026</p>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modal">
+        <div class="modal-box">
+            <span onclick="closeModal()" style="position:absolute; top:20px; right:30px; cursor:pointer; font-size:2.5rem; color:var(--nhan)">&times;</span>
+            <div id="modal-content"></div>
+        </div>
+    </div>
+
+    <script>
+        // MOUSE EFFECT
+        const dot = document.getElementById('dot'); const circle = document.getElementById('circle');
+        document.addEventListener('mousemove', (e) => {
+            dot.style.left = e.clientX + 'px'; dot.style.top = e.clientY + 'px';
+            circle.style.left = (e.clientX - 20) + 'px'; circle.style.top = (e.clientY - 20) + 'px';
+        });
+
+        function startApp() { document.getElementById('welcome-screen').classList.add('hide'); }
+
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById('page-' + pageId).classList.add('active');
+            document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
+            document.getElementById('nav-' + pageId).classList.add('active');
+            window.scrollTo(0,0);
+        }
+
+        // DATABASE SẢN PHẨM
+      const pharmacyData = [
+{
+id:1,
+name:"Hapacol 150mg",
+tag:"Hạ sốt trẻ em",
+img:"images/hapacol.jpg",
+content:"Hapacol 150mg là thuốc giảm đau và hạ sốt chuyên dùng cho trẻ em, được sản xuất theo tiêu chuẩn chất lượng cao, thường được sử dụng trong các trường hợp sốt do nhiễm virus, vi khuẩn, sau tiêm chủng hoặc mọc răng. Thuốc giúp làm giảm nhanh thân nhiệt và cải thiện các triệu chứng khó chịu như đau đầu, đau họng và đau nhức cơ thể.",
+ingredients:"Paracetamol 150mg, cùng các tá dược như tinh bột, đường, hương cam, chất ổn định và chất tạo màu an toàn.",
+dose:"Trẻ em từ 10 - 15kg: dùng 1 gói/lần. Có thể lặp lại sau mỗi 4 - 6 giờ nếu cần thiết. Không dùng quá 5 lần/ngày.",
+usage:"Hòa tan hoàn toàn gói thuốc trong nước ấm, khuấy đều trước khi cho trẻ uống. Nên dùng sau bữa ăn để giảm kích ứng dạ dày.",
+indication:"Điều trị sốt, giảm đau nhẹ đến trung bình như đau đầu, đau răng, đau họng, đau do cảm cúm.",
+contraindication:"Không dùng cho trẻ có tiền sử dị ứng với Paracetamol, bệnh gan nặng, thiếu men G6PD.",
+sideEffects:"Có thể gây buồn nôn, phát ban nhẹ, hiếm gặp phản ứng dị ứng nghiêm trọng như sốc phản vệ.",
+note:"Không dùng đồng thời với các thuốc khác chứa Paracetamol để tránh quá liều gây tổn thương gan.",
+storage:"Bảo quản nơi khô ráo, thoáng mát, tránh ánh nắng trực tiếp, nhiệt độ dưới 30°C.",
+source:"Nhà thuốc Long Châu"
+},
+
+{
+id:2,
+name:"Panadol Extra",
+tag:"Giảm đau mạnh",
+img:"images/panadol.jpg",
+content:"Panadol Extra là thuốc giảm đau hiệu quả cao nhờ sự kết hợp giữa Paracetamol và Caffeine, giúp tăng cường tác dụng giảm đau và cải thiện sự tỉnh táo. Thuốc thường được dùng cho các trường hợp đau đầu, đau nửa đầu, đau cơ, đau lưng và đau do căng thẳng.",
+ingredients:"Paracetamol 500mg, Caffeine 65mg và tá dược vừa đủ.",
+dose:"Người lớn: uống 1 - 2 viên/lần, cách nhau 4 - 6 giờ. Không vượt quá 8 viên trong 24 giờ.",
+usage:"Uống nguyên viên với nước, không nhai hoặc nghiền. Nên dùng sau bữa ăn.",
+indication:"Đau đầu, đau cơ, đau răng, đau bụng kinh, cảm cúm.",
+contraindication:"Không dùng cho người bệnh gan nặng, người mẫn cảm với caffeine.",
+sideEffects:"Mất ngủ, hồi hộp, buồn nôn, chóng mặt nếu dùng nhiều.",
+note:"Tránh dùng chung với cà phê, trà hoặc nước tăng lực.",
+storage:"Bảo quản nơi khô ráo, tránh ẩm.",
+source:"Pharmacity"
+},
+
+{
+id:3,
+name:"Nước muối sinh lý NaCl 0.9%",
+tag:"Sát khuẩn",
+img:"images/nuocmuoisinhly.jpg",
+content:"Dung dịch NaCl 0.9% là dung dịch đẳng trương được sử dụng rộng rãi trong y tế và đời sống hàng ngày. Có tác dụng làm sạch, sát khuẩn nhẹ và hỗ trợ vệ sinh mắt, mũi, họng.",
+ingredients:"Natri Clorid 0.9%, nước tinh khiết.",
+dose:"Nhỏ 1 - 3 giọt/lần hoặc dùng để rửa trực tiếp.",
+usage:"Có thể sử dụng nhiều lần trong ngày để vệ sinh.",
+indication:"Vệ sinh mắt, mũi, súc miệng, rửa vết thương nhẹ.",
+contraindication:"Không dùng chung chai cho nhiều người.",
+sideEffects:"Hầu như không có.",
+note:"Nên sử dụng trong vòng 15 ngày sau khi mở nắp.",
+storage:"Đậy kín, tránh nhiễm khuẩn.",
+source:"An Khang"
+},
+
+{
+id:4,
+name:"Băng cá nhân Urgo",
+tag:"Sơ cứu",
+img:"images/keocanhan.jpg",
+content:"Băng cá nhân Urgo được thiết kế để bảo vệ các vết thương nhỏ, giúp ngăn ngừa nhiễm trùng và hỗ trợ quá trình lành vết thương.",
+ingredients:"Gạc vô trùng, lớp keo y tế, lớp phủ bảo vệ.",
+dose:"Dán trực tiếp lên vết thương sau khi làm sạch.",
+usage:"Thay băng mỗi ngày hoặc khi bị ướt.",
+indication:"Vết trầy xước, vết cắt nhỏ.",
+contraindication:"Không dùng cho vết thương sâu.",
+sideEffects:"Kích ứng da nhẹ.",
+note:"Giữ vết thương sạch trước khi dán.",
+storage:"Nơi khô ráo.",
+source:"Y tế"
+},
+
+{
+id:5,
+name:"Nhiệt kế thủy ngân",
+tag:"Đo thân nhiệt",
+img:"images/nhitke.jpg",
+content:"Nhiệt kế thủy ngân là thiết bị đo nhiệt độ cơ thể có độ chính xác cao, thường dùng trong gia đình và bệnh viện.",
+ingredients:"Ống thủy tinh chứa thủy ngân.",
+dose:"Đặt ở nách 5 phút.",
+usage:"Lắc trước khi dùng.",
+indication:"Đo nhiệt độ cơ thể.",
+contraindication:"Không dùng nếu bị vỡ.",
+sideEffects:"Thủy ngân độc.",
+note:"Cẩn thận khi sử dụng.",
+storage:"Tránh va đập.",
+source:"Thiết bị y tế"
+},
+
+{
+id:6,
+name:"Miếng dán hạ sốt",
+tag:"Làm mát",
+img:"images/danhasot.jpg",
+content:"Miếng dán hạ sốt giúp làm mát nhanh vùng trán nhờ cơ chế hấp thụ nhiệt.",
+ingredients:"Gel làm mát, menthol.",
+dose:"Dán trực tiếp.",
+usage:"Dùng 1 lần.",
+indication:"Hỗ trợ hạ sốt.",
+contraindication:"Không dán lên da tổn thương.",
+sideEffects:"Hiếm.",
+note:"Không thay thế thuốc.",
+storage:"Nơi mát.",
+source:"Nhà thuốc"
+},
+
+{
+id:7,
+name:"Loratadin 10mg",
+tag:"Dị ứng",
+img:"images/loratadin.jpg",
+content:"Thuốc kháng histamin thế hệ 2, giúp giảm các triệu chứng dị ứng như hắt hơi, sổ mũi, nổi mề đay.",
+ingredients:"Loratadine 10mg.",
+dose:"1 viên/ngày.",
+usage:"Uống sau ăn.",
+indication:"Viêm mũi dị ứng.",
+contraindication:"Phụ nữ mang thai.",
+sideEffects:"Buồn ngủ nhẹ.",
+note:"Không lạm dụng.",
+storage:"Khô ráo.",
+source:"Pharmacity"
+},
+
+{
+id:8,
+name:"Oresol",
+tag:"Bù nước",
+img:"images/oresol.jpg",
+content:"Oresol là dung dịch bù nước và điện giải theo tiêu chuẩn WHO.",
+ingredients:"Glucose, NaCl, KCl.",
+dose:"Pha 1 gói/200ml.",
+usage:"Uống từ từ.",
+indication:"Tiêu chảy.",
+contraindication:"Pha sai tỷ lệ.",
+sideEffects:"Không đáng kể.",
+note:"Pha đúng hướng dẫn.",
+storage:"Khô ráo.",
+source:"DHG"
+},
+
+{
+id:9,
+name:"Hapacol 500",
+tag:"Giảm đau",
+img:"images/hapacol500.jpg",
+content:"Giảm đau và hạ sốt cho người lớn.",
+ingredients:"Paracetamol 500mg.",
+dose:"1 viên/lần.",
+usage:"Uống nước.",
+indication:"Đau.",
+contraindication:"Bệnh gan.",
+sideEffects:"Buồn nôn.",
+note:"Không quá liều.",
+storage:"Khô.",
+source:"Long Châu"
+},
+
+{
+id:10,
+name:"Paracetamol",
+tag:"Thuốc cơ bản",
+img:"images/paracetamol.jpg",
+content:"Thuốc giảm đau hạ sốt phổ biến.",
+ingredients:"Paracetamol.",
+dose:"Theo chỉ định.",
+usage:"Uống.",
+indication:"Sốt.",
+contraindication:"Gan.",
+sideEffects:"Hiếm.",
+note:"Cẩn thận.",
+storage:"Khô.",
+source:"Y tế"
+}
+];
+        const list = document.getElementById('drug-list');
+        list.innerHTML = pharmacyData.map(d => `
+            <div class="the-thuoc" data-tilt data-tilt-max="15" data-tilt-speed="400" data-tilt-glare data-tilt-max-glare="0.3" onclick="openModal(${d.id})">
+                <img src="${d.img}">
+                <div style="font-size:0.6rem; color:var(--chinh); font-weight:800; letter-spacing:2px; margin-bottom:10px">${d.tag}</div>
+                <h3 style="margin:5px 0">${d.name}</h3>
+                <p style="font-size:0.7rem; opacity:0.4">${d.source}</p>
+                <div style="margin-top:15px; font-size:0.6rem; border:1px solid var(--vien); padding:8px; border-radius:100px">CHI TIẾT V.I.P</div>
+            </div>
+        `).join('');
+
+        // Khởi tạo tilt cho tất cả phần tử có data-tilt
+        VanillaTilt.init(document.querySelectorAll("[data-tilt]"));
+
+        function openModal(id) {
+            const d = pharmacyData.find(x => x.id === id);
+            document.getElementById('modal-content').innerHTML = `
+                <div style="display:grid; grid-template-columns: 1fr 1.5fr; gap:40px">
+                    <img src="${d.img}" style="width:100%; border-radius:30px; border:1px solid var(--vien)">
+                    <div>
+                        <h2 style="font-family:'Montserrat'; font-size:2.5rem; color:var(--chinh)">${d.name}</h2>
+                        <p style="margin:20px 0; line-height:1.8; opacity:0.8">${d.content}</p>
+                        <div style="background:rgba(255,255,255,0.02); padding:20px; border-radius:15px">
+                            <p><strong>Thành phần chi tiết:</strong> ${d.ingredients}</p>
+                            <p style="margin-top:10px"><strong>Hướng dẫn liều dùng:</strong> ${d.dose}</p>
+                            <p style="margin-top:10px; color:var(--nhan)"><strong>Lưu ý quan trọng:</strong> ${d.note}</p>
+                        </div>
+                        <p style="margin-top:20px; opacity:0.5; font-size:0.8rem">Nguồn dữ liệu: ${d.source}</p>
+                    </div>
+                </div>
+            `;
+            document.getElementById('modal').style.display = 'flex';
+        }
+
+        function closeModal() { document.getElementById('modal').style.display = 'none'; }
+
+        // TÍNH LIỀU NHƯ BÁC SĨ
+       function vipCalculate() {
+    const w = document.getElementById('weight').value;
+    const h = document.getElementById('height').value;
+    const age = document.getElementById('age-group').value;
+    const symptom = document.getElementById('symptom').value;
+
+    if(!w || !h) return alert("Nhập đầy đủ thông tin!");
+
+    let drug="", dose="", note="", extra="";
+
+    if(symptom==="sot"){
+        drug="Paracetamol";
+        dose=(w*15).toFixed(0)+" mg/lần";
+        note="4-6 giờ/lần, tối đa 5 lần/ngày";
+        extra="Kết hợp lau mát, uống nhiều nước";
+    }
+    else if(symptom==="daudau"){
+        drug="Panadol Extra";
+        dose="1-2 viên/lần";
+        note="6 giờ/lần";
+        extra="Tránh stress, ngủ đủ giấc";
+    }
+    else if(symptom==="camcum"){
+        drug="Paracetamol + Vitamin C";
+        dose="500mg/lần";
+        note="Ngày 3-4 lần";
+        extra="Nghỉ ngơi, uống nước ấm";
+    }
+    else if(symptom==="diung"){
+        drug="Loratadin 10mg";
+        dose="1 viên/ngày";
+        note="Uống buổi tối";
+        extra="Tránh dị nguyên";
+    }
+    else if(symptom==="tieuchay"){
+        drug="Oresol";
+        dose="1 gói/200ml";
+        note="Uống rải rác";
+        extra="Ăn nhẹ, tránh dầu mỡ";
+    }
+
+    document.getElementById('vip-result').innerHTML = `
+    <div style="animation:fadeIn 0.5s">
+        <h2 style="color:var(--chinh)">📋 ĐƠN THUỐC THAM KHẢO</h2>
+
+        <p><strong>👤 Bệnh nhân:</strong> ${age==="child"?"Trẻ em":"Người lớn"}</p>
+        <p><strong>⚖️ Cân nặng:</strong> ${w} kg</p>
+        <p><strong>📏 Chiều cao:</strong> ${h} cm</p>
+        <p><strong>🩺 Triệu chứng:</strong> ${symptom}</p>
+
+        <div style="margin:15px 0;border-top:1px solid var(--vien)"></div>
+
+        <h3 style="color:var(--phu)">💊 ${drug}</h3>
+        <h1 style="margin:10px 0">${dose}</h1>
+
+        <p><strong>📌 Cách dùng:</strong> ${note}</p>
+        <p><strong>📝 Hướng dẫn thêm:</strong> ${extra}</p>
+
+        <div style="margin-top:20px;color:var(--nhan)">
+        ⚠️ Đây là hệ thống tham khảo, không thay thế bác sĩ.
+        </div>
+    </div>
+    `;
+}
+    </script>
+</body>
+</html>
